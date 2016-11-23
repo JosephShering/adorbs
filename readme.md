@@ -6,7 +6,7 @@ methodology.
 
 ## Getting Started
 
-```
+```lua
 local engine, system, entity, component = require 'src/adorbs' ()
 
 local state = {}
@@ -29,7 +29,7 @@ entity.create("Player", {
 
 Peeking into the engine state you'll see the structure
 
-```
+```lua
 {
     resources = {
         components = {},
