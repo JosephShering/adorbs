@@ -17,6 +17,5 @@ entity.create("Player", {
     "Character"
 })
 
-print(inspect(state))
 state.entities["Player"].active = true
 state.entities["Player"].components["Transform"].x = 10

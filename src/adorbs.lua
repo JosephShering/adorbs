@@ -62,9 +62,13 @@ end
 function entity.addComponent(entity, component)
 end
 
-return {
-    engine = engine,
-    system = system,
-    entity = entity,
-    component = component
-}
+return function()
+    return engine, system, entity, component
+end
+
+-- return {
+--     engine = engine,
+--     system = system,
+--     entity = entity,
+--     component = component
+-- }
