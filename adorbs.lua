@@ -4,8 +4,7 @@ local entity = {}
 
 local state = {
     entities = {},
-    systems = {},
-    _componentToEntity = {}
+    systems = {}
 }
 
 -- Engine
