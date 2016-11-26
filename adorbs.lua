@@ -23,7 +23,8 @@ function engine.process()
                     pluckedEntityComponents[#pluckedEntityComponents +1] = entity.components[requiredSystemComponentName]
                 end
             end
-            system.update(love.timer.getDelta(), unpack(pluckedEntityComponents))
+
+            system.process(love.timer.getDelta(), unpack(pluckedEntityComponents))
         end
     end
 end
@@ -31,25 +32,17 @@ end
 
 
 -- System
-function system.create(name, components, updateFunc, drawFunc)
+function system.create(components, processFunc)
 
-    if state.systems[name] ~= nil then
-        print("That system already exists")
-    else
-        state.systems[name] = {
-            components = components,
-            update = updateFunc,
-            draw = drawFunc
-        }
-    end
-
+    state.systems[#state.systems + 1] = {
+        components = components,
+        process = processFunc
+    }
 end
 -- end System
 
 
 -- Entity
--- entity.create
--- Creates an entity and adds it to the state.entities
 function entity.create(name, components, isActive)
     local newEntity = {
         active = isActive,
@@ -69,10 +62,6 @@ function entity.create(name, components, isActive)
 
     state.entities[name] = newEntity
     return state.entities[name]
-end
-
-function entity.component(entityName, componentName)
-    return state.entities[entityName].components[componentName]
 end
 -- end Entity
 

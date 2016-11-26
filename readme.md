@@ -1,47 +1,30 @@
 # (Totes) Adorbs
 
-Adorbs is a function entity framework for LÖVE. Based on gamedev's entity
-methodology.
+Adorbs is a functional entity framework for LÖVE. The goal was to provide a
+minimal entity framework sdk with a centralized game state.
 
 
 ## Getting Started
 
+Below is an example of a minimal ECS setup in adorbs.
 ```lua
-local engine, system, entity, component = require 'src/adorbs' ()
+local engine, system, entity, component = require 'adorbs' ()
 
-local state = {}
+function love.load()
+    entity.create('player', {
+        'characterController', -- components are defined inline, and can be empty, as long as they are a string
+        'transform' = { x = 15, y = 0 }
+    })
 
-engine.create(state)
-component.create("Transform", {x = 0, y = 0})
-component.create("Character", { health = 100 })
-component.create("Body", { fixture = {}, body = {}, world = {}, scale = 1, angle = 0 })
+    system.create(
+        {'characterController', 'transform'},
+        function(delta, characterController, transform) -- called on each entity that matches components
+            print(transform.x) -- should print out 15
+        end
+    )
+end
 
-entity.create("Player", {
-    ["Transform"] = { x = 100, y = 100 },
-    "Character"
-})
+function love.draw()
+    engine.process()
+end
 ```
-
-`engine.create/1` attaches itself to any table and will populate that table with ECS data.
-
-
-## Engine State
-
-Peeking into the engine state you'll see the structure
-
-```lua
-{
-    resources = {
-        components = {},
-        systems = {}
-    }
-}
-```
-
-Resources hold the available components and systems that your game has access to, this
-gets populated by `component.create` and `system.create`
-
-## Best practices
-
-It it is HIGHLY recommended that you do not edit your ECS state directly. Instead, write
-functions for your systems to modify your an entities components
