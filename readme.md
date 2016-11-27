@@ -25,6 +25,8 @@ function love.load()
             print(transform.x) -- should print out 15
         end
     )
+
+    engine.init()
 end
 
 function love.draw()
