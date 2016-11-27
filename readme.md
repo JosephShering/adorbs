@@ -18,6 +18,9 @@ function love.load()
 
     system.create(
         {'characterController', 'transform'},
+        function(characterController, transform)
+            --initialize any data you need here
+        end
         function(delta, characterController, transform) -- called on each entity that matches components
             print(transform.x) -- should print out 15
         end
