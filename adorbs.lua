@@ -13,18 +13,29 @@ function engine.state()
 end
 
 function engine.process()
-    for systemName, system in pairs(state.systems) do
+    for _, system in ipairs(state.systems) do
         for entityName, entity in pairs(state.entities) do
-
             local pluckedEntityComponents = {}
-
             for _, requiredSystemComponentName in ipairs(system.components) do
                 if entity.components[requiredSystemComponentName] ~= nil then
                     pluckedEntityComponents[#pluckedEntityComponents +1] = entity.components[requiredSystemComponentName]
                 end
             end
-
             system.process(love.timer.getDelta(), unpack(pluckedEntityComponents))
+        end
+    end
+end
+
+function engine.init()
+    for _, system in ipairs(state.systems) do
+        for entityName, entity in pairs(state.entities) do
+            local pluckedEntityComponents = {}
+            for _, requiredSystemComponentName in ipairs(system.components) do
+                if entity.components[requiredSystemComponentName] ~= nil then
+                    pluckedEntityComponents[#pluckedEntityComponents +1] = entity.components[requiredSystemComponentName]
+                end
+            end
+            system.init(unpack(pluckedEntityComponents))
         end
     end
 end
@@ -32,11 +43,11 @@ end
 
 
 -- System
-function system.create(components, processFunc)
-
+function system.create(components, initFunc, processFunc)
     state.systems[#state.systems + 1] = {
         components = components,
-        process = processFunc
+        process = processFunc,
+        init = initFunc
     }
 end
 -- end System
