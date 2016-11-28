@@ -7,6 +7,17 @@ local state = {
     systems = {}
 }
 
+-- System
+function system.create(components, initFunc, processFunc)
+    state.systems[#state.systems + 1] = {
+        status = 'init',
+        components = components,
+        process = processFunc,
+        init = initFunc
+    }
+end
+-- end System
+
 -- Engine
 function engine.state()
     return state
@@ -21,41 +32,23 @@ function engine.process()
                     pluckedEntityComponents[#pluckedEntityComponents +1] = entity.components[requiredSystemComponentName]
                 end
             end
-            system.process(love.timer.getDelta(), unpack(pluckedEntityComponents))
-        end
-    end
-end
 
-function engine.init()
-    for _, system in ipairs(state.systems) do
-        for entityName, entity in pairs(state.entities) do
-            local pluckedEntityComponents = {}
-            for _, requiredSystemComponentName in ipairs(system.components) do
-                if entity.components[requiredSystemComponentName] ~= nil then
-                    pluckedEntityComponents[#pluckedEntityComponents +1] = entity.components[requiredSystemComponentName]
+            if #pluckedEntityComponents > 0 then
+                if entity.status == 'init' then
+                    system.init(unpack(pluckedEntityComponents))
+                    entity.status = 'running'
+                elseif entity.status == 'running' then
+                    system.process(love.timer.getDelta(), unpack(pluckedEntityComponents))
                 end
             end
-            system.init(unpack(pluckedEntityComponents))
         end
     end
 end
--- end Engine
-
-
--- System
-function system.create(components, initFunc, processFunc)
-    state.systems[#state.systems + 1] = {
-        components = components,
-        process = processFunc,
-        init = initFunc
-    }
-end
--- end System
-
 
 -- Entity
 function entity.create(name, components, isActive)
     local newEntity = {
+        status = 'init',
         active = isActive,
         components = {}
     }
