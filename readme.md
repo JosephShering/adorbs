@@ -24,9 +24,6 @@ function love.load()
         function(delta, characterController, transform) -- called on each entity that matches components
             print(transform.x) -- should print out 15
         end
-    )
-
-    engine.init()
 end
 
 function love.draw()
