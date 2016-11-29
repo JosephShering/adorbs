@@ -8,13 +8,16 @@ local state = {
 }
 
 -- System
-function system.create(components, initFunc, processFunc)
-    state.systems[#state.systems + 1] = {
-        status = 'init',
+function system.create(name, components, processFunc, status)
+    state.systems[name] = {
+        status = status ~= nil and status or 'running',
         components = components,
-        process = processFunc,
-        init = initFunc
+        process = processFunc
     }
+end
+
+function system.pause(name)
+    state.systems[name].status = 'paused'
 end
 -- end System
 
@@ -24,7 +27,7 @@ function engine.state()
 end
 
 function engine.process()
-    for _, system in ipairs(state.systems) do
+    for _, system in pairs(state.systems) do
         for entityName, entity in pairs(state.entities) do
             local pluckedEntityComponents = {}
             for _, requiredSystemComponentName in ipairs(system.components) do
@@ -33,13 +36,8 @@ function engine.process()
                 end
             end
 
-            if #pluckedEntityComponents > 0 then
-                if entity.status == 'init' then
-                    system.init(unpack(pluckedEntityComponents))
-                    entity.status = 'running'
-                elseif entity.status == 'running' then
-                    system.process(love.timer.getDelta(), unpack(pluckedEntityComponents))
-                end
+            if #pluckedEntityComponents > 0 and system.status == 'running' then
+                system.process(love.timer.getDelta(), unpack(pluckedEntityComponents))
             end
         end
     end
