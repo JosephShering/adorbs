@@ -30,13 +30,17 @@ function engine.process()
     for _, system in pairs(state.systems) do
         for entityName, entity in pairs(state.entities) do
             local pluckedEntityComponents = {}
+			local matchRequirements = true 
             for _, requiredSystemComponentName in ipairs(system.components) do
                 if entity.components[requiredSystemComponentName] ~= nil then
                     pluckedEntityComponents[#pluckedEntityComponents +1] = entity.components[requiredSystemComponentName]
+                else
+					matchRequirements = false
+					break
                 end
             end
-
-            if #pluckedEntityComponents > 0 and system.status == 'running' then
+			
+            if matchRequirements and #pluckedEntityComponents > 0 and system.status == 'running' then
                 system.process(love.timer.getDelta(), unpack(pluckedEntityComponents))
             end
         end
