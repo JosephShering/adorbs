@@ -47,6 +47,23 @@ function engine.process()
     end
 end
 
+function engine.draw()
+    for _, system in pairs(state.systems) do
+        for entityName, entity in pairs(state.entities) do
+            local pluckedEntityComponents = {}
+            for _, requiredSystemComponentName in ipairs(system.components) do
+                if entity.components[requiredSystemComponentName] ~= nil then
+                    pluckedEntityComponents[#pluckedEntityComponents +1] = entity.components[requiredSystemComponentName]
+                end
+            end
+
+            if #pluckedEntityComponents > 0 and system.status == 'running' and system.draw ~= nil then
+                system.draw(love.timer.getDelta(), unpack(pluckedEntityComponents))
+            end
+        end
+    end
+end
+
 -- Entity
 function entity.create(name, components, isActive)
     local newEntity = {
