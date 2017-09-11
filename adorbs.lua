@@ -30,14 +30,35 @@ function engine.process()
     for _, system in pairs(state.systems) do
         for entityName, entity in pairs(state.entities) do
             local pluckedEntityComponents = {}
+			local matchRequirements = true 
+            for _, requiredSystemComponentName in ipairs(system.components) do
+                if entity.components[requiredSystemComponentName] ~= nil then
+                    pluckedEntityComponents[#pluckedEntityComponents +1] = entity.components[requiredSystemComponentName]
+                else
+					matchRequirements = false
+					break
+                end
+            end
+			
+            if matchRequirements and #pluckedEntityComponents > 0 and system.status == 'running' then
+                system.process(love.timer.getDelta(), unpack(pluckedEntityComponents))
+            end
+        end
+    end
+end
+
+function engine.draw()
+    for _, system in pairs(state.systems) do
+        for entityName, entity in pairs(state.entities) do
+            local pluckedEntityComponents = {}
             for _, requiredSystemComponentName in ipairs(system.components) do
                 if entity.components[requiredSystemComponentName] ~= nil then
                     pluckedEntityComponents[#pluckedEntityComponents +1] = entity.components[requiredSystemComponentName]
                 end
             end
 
-            if #pluckedEntityComponents > 0 and system.status == 'running' then
-                system.process(love.timer.getDelta(), unpack(pluckedEntityComponents))
+            if #pluckedEntityComponents > 0 and system.status == 'running' and system.draw ~= nil then
+                system.draw(love.timer.getDelta(), unpack(pluckedEntityComponents))
             end
         end
     end

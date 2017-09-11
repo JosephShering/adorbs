@@ -13,14 +13,16 @@ local engine, system, entity, component = require 'adorbs' ()
 function love.load()
     entity.create('player', {
         'characterController', -- components are defined inline, and can be empty, as long as they are a string
-        'transform' = { x = 15, y = 0 }
+        transform = { x = 15, y = 0 }
     })
 
     system.create(
+        'systemName',
         {'characterController', 'transform'},
         function(delta, characterController, transform) -- called on each entity that matches components
             print(transform.x) -- should print out 15
         end
+    )
 end
 
 function love.draw()
