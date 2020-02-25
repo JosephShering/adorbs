@@ -69,7 +69,7 @@ return function()
             local currentAnimation = animation.animations[animation.current]
 
             if currentAnimation == nil then
-                error('You called an animation (' .. animation.current .. ') that does exist!')
+                error('You called an animation (' .. animation.current .. ') that does\'nt exist!')
                 return
             end
 
